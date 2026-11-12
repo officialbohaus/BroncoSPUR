@@ -1,13 +1,9 @@
 
 
-// produces num w/ lowest 'width' bits as '1', up to 32 bits (limit for bitshift operand)
+// produces num w/ lowest 'width' bits as '1'
 //      mask works like so:                   |--| <--- lowest 4 bits are 1
 //      mask(4) --> 1 << 4 --> 10000 - 1 --> 01111
-// implicitly, JS modulos 'width' by 32 to ensure a positive number [0-31].
-// so if we want a 32 bit wide mask, requesting 1 << 32 is that same as 1 << 0, 
-// which then resolves to 1 - 1 = 0. To get around this, we check if the requested
-// width is 32-- if it is, we just return the hex value of 32 '1' bits.
-export const mask = (width: number) => (width === 32 ? 0xffffffff : (1 << width) - 1);
+export const mask = (width: number) => 2 ** width - 1
 
 // truncates 'value' to lowest 'width' bits. 
 // the '>>>' operator (unsigned right shift operator) is used here to coerce
