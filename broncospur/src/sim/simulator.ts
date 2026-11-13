@@ -21,7 +21,7 @@ export class Simulator {
     }
 
     private instantiate(circuit: Circuit) {
-        const { version, components, wires } = circuit
+        const { components } = circuit
             for (const {id, type, params} of components) {
                 if (this.validateID(id)) {
                     const factory = library[type]
@@ -100,7 +100,7 @@ export class Simulator {
         // calculate the inputCount for each component
         for (const [to, from] of this.driver) {
             const [toComp, toPort] = parseRef(to)
-            const [fromComp, _] = parseRef(from)
+            const [fromComp] = parseRef(from)
             
             // check for cycles-- only possible from combInputs
             if (!this.defs.get(toComp)!.combInputs.includes(toPort)) continue
@@ -114,8 +114,8 @@ export class Simulator {
 
         // Kahn's algo: repeatedly take the next component with no unadded inputs
         const queue = [...inputCount]
-            .filter(([_, count]) => count === 0)
-            .map(([id, _]) => id)
+            .filter(([, count]) => count === 0)
+            .map(([id]) => id)
 
         const order: string[] = [];
         while (queue.length > 0) {
