@@ -25,31 +25,28 @@ export class Simulator {
             for (const {id, type, params} of components) {
                 if (this.validateID(id)) {
                     const factory = library[type]
-                    if (!factory) { // check if library[type] didn't exist
-                        const def = library[type](params)
-                        this.defs.set(id, def)
-                        this.state.set(id, def.initState?.())
+                    if (!factory) { throw new Error(`Unknown component type: ${type}`) }
+                    const def = library[type](params)
+                    this.defs.set(id, def)
+                    this.state.set(id, def.initState?.())
 
-                        for (const inPort of def.inputs) {
-                            const portName = `${id}.${inPort.name}`
-                            this.ports.set(portName, {port: inPort, type: "input"})
-                        }
+                    for (const inPort of def.inputs) {
+                        const portName = `${id}.${inPort.name}`
+                        this.ports.set(portName, {port: inPort, type: "input"})
+                    }
 
-                        for (const outPort of def.outputs) {
-                            const portName = `${id}.${outPort.name}`
-                            this.ports.set(portName, {port: outPort, type: "output"})
-                        }
+                    for (const outPort of def.outputs) {
+                        const portName = `${id}.${outPort.name}`
+                        this.ports.set(portName, {port: outPort, type: "output"})
+                    }
 
-                        // confirm all combInputs are valid input ports
-                        for (const combIn of def.combInputs) {
-                            if (!def.inputs.some((port) => {
-                                port.name === combIn
-                            })) {
-                                throw new Error(`${type} "${id}" combInputs lists "${combIn}, which isn't an input`)
-                            }
+                    // confirm all combInputs are valid input ports
+                    for (const combIn of def.combInputs) {
+                        if (!def.inputs.some((port) => port.name === combIn )) {
+                            throw new Error(`${type} "${id}" combInputs lists "${combIn}", which isn't an input`)
                         }
-                    }    
-                }
+                    }
+                }    
             }
         }
 
@@ -64,7 +61,7 @@ export class Simulator {
 
     private validateID(id: string): boolean {
         if (id.includes(".")) {
-            throw new Error(`Component id "${id} can't contain "."`)
+            throw new Error(`Component id "${id}" can't contain "."`)
         }
         if (this.defs.has(id)) {
             throw new Error(`Duplicate component id "${id}"`)
