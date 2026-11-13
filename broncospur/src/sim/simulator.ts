@@ -161,9 +161,9 @@ export class Simulator {
                 next.set(id, def.clock(this.readInputs(id), this.state.get(id)))
         for (const [id, s] of next)
             this.state.set(id, s)
-        this.cycle++
         this.settle()
         }
+        this.cycle++
     }
 
     get(port: string) {
