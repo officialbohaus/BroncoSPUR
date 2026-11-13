@@ -1,3 +1,4 @@
+import { trunc } from "./bits";
 import { library } from "./library";
 import type { Circuit, ComponentDef, Port, PortType, Wire } from "./types";
 
@@ -12,7 +13,10 @@ export class Simulator {
     private order: string[]
 
     constructor(circuit: Circuit) {
-        
+        this.instantiate(circuit)
+        this.connect(circuit)
+        this.order = this.topoSort()
+        this.settle()
 
     }
 
@@ -56,10 +60,6 @@ export class Simulator {
                 throw new Error(`${path}: "${to}" is already driven to by "${this.driver.get(to)}"`)
             this.driver.set(to, from)
         }
-    }
-
-    settle() {
-
     }
 
     private validateID(id: string): boolean {
@@ -139,6 +139,40 @@ export class Simulator {
     }
 
     // TODO: run and construct
+    private readInputs(id: string): Values {
+        const vals: Values = {}
+        for (const p of this.defs.get(id)!.inputs) {
+            const src = this.driver.get(refStr(id, p))
+            vals[p.name] = src ? this.get(src) : 0
+        }
+    }
+
+    settle() {
+        for (const id of this.order) {
+            const def = this.defs.get(id)!
+            const out = def.evaluate(this.readInputs(id), this.state.get(id))
+            for (const p of def.outputs)
+                this.values.set(refStr(id, p), trunc(out[p.name] ?? 0, p.width))
+        }
+    }
+
+    step() {
+        const next = new Map<string, any>()
+        for (const [id, def] of this.defs) {
+            if (def.clock)
+                next.set(id, def.clock(this.readInputs(id), this.state.get(id)))
+        for (const [id, s] of next)
+            this.state.set(id, s)
+        this.cycle++
+        this.settle()
+        }
+    }
+
+    get(port: string) {
+        return this.values.get(port) ?? 0
+    }
+
+    
 }
 
 function parseRef(ref: string): [string, string] {
@@ -147,4 +181,8 @@ function parseRef(ref: string): [string, string] {
         throw new Error(`Bad port reference "${ref}" (expected "component.port")`);
     return [parts[0], parts[1]];
     }
+
+function refStr(id: string, port: Port) {
+    return `${id}.${port.name}`
+}
 
