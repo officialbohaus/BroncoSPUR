@@ -19,16 +19,13 @@ const pcCounter = (): Circuit => ({
 describe('running', () => {
     test('PC implementation', () => {
         const sim = new Simulator(pcCounter())
-        expect(sim.get('pc.q')).toBe(0)
-        expect(sim.get('add.sum')).toBe(4)
-        expect(sim.cycle).toBe(0)
-        sim.step()
-        expect(sim.get('pc.q')).toBe(4)
-        expect(sim.get('add.sum')).toBe(8)
-        expect(sim.cycle).toBe(1)
-        sim.step()
-        expect(sim.get('pc.q')).toBe(8)
-        expect(sim.get('add.sum')).toBe(12)
-        expect(sim.cycle).toBe(2)
+        for (let i = 0; i < 25; i++) {
+            expect(sim.get('pc.q')).toBe(i * 4)
+            expect(sim.get('add.sum')).toBe((i + 1) * 4)
+            expect(sim.cycle).toBe(i)
+            sim.step()
+        }
     })
+
+    
 })
