@@ -43,3 +43,15 @@ export const mux2 = ({ width = 32 } = {}): ComponentDef => ({
     combInputs: ['a', 'b', 'sel'],
     evaluate: ({a, b, sel}) => ({out: sel ? b : a })
 })
+
+
+export const alu = ({ width = 32} = {}): ComponentDef => ({
+    inputs: [{ name: 'a', width}, {name: 'b', width}, {name: 'func', width: 3}],
+    outputs: [{ name: 'out', width}],
+    combInputs: [ 'a', 'b', 'func' ],
+    evaluate: (a, b, func) => ({
+
+    })
+})
+
+const 
