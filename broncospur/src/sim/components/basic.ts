@@ -20,3 +20,26 @@ export const adder = ({ width = 32} = {}): ComponentDef => ({
     combInputs: ['a', 'b'],
     evaluate: ({ a, b }) => ({ sum: trunc(a + b, width)})
 })
+
+export const constant = ({ value = 0, width = 32 } = {}): ComponentDef => ({
+    inputs: [],
+    outputs: [{ name: 'out', width }],
+    combInputs: [],
+    evaluate: () => ({ out: trunc(value, width) })
+})
+
+export const register = ({width = 32, initial = 0} = {}): ComponentDef<number> => ({
+    inputs: [{ name: 'd', width}],
+    outputs: [{ name: 'q', width}],
+    combInputs: [],
+    initState: () => initial,
+    evaluate: (_in, state) => ({ q: state }),
+    clock: ({ d }) => d,
+})
+
+export const mux2 = ({ width = 32 } = {}): ComponentDef => ({
+    inputs: [{ name: 'a', width}, {name: 'b', width}, {name: 'sel', width: 1}],
+    outputs: [{ name: 'out', width}],
+    combInputs: ['a', 'b', 'sel'],
+    evaluate: ({a, b, sel}) => ({out: sel ? b : a })
+})
