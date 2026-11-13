@@ -137,6 +137,8 @@ export class Simulator {
         }
         return order
     }
+
+    // TODO: run and construct
 }
 
 function parseRef(ref: string): [string, string] {
@@ -145,3 +147,4 @@ function parseRef(ref: string): [string, string] {
         throw new Error(`Bad port reference "${ref}" (expected "component.port")`);
     return [parts[0], parts[1]];
     }
+
