@@ -1,6 +1,6 @@
 import { trunc } from "./bits";
 import { library } from "./library";
-import type { Circuit, ComponentDef, Port, PortType, Wire } from "./types";
+import type { Circuit, ComponentDef, Port, PortType, Values, Wire } from "./types";
 
 export class Simulator {
     cycle = 0
@@ -142,6 +142,7 @@ export class Simulator {
             const src = this.driver.get(refStr(id, p))
             vals[p.name] = src ? this.get(src) : 0
         }
+        return vals
     }
 
     settle() {
