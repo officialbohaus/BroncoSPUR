@@ -1,4 +1,5 @@
-import { trunc } from "#src/sim/bits.ts"
+import { BITS_FUNC, FUNC, trunc } from "#src/sim/bits.ts"
+import type { funcBits } from "#src/sim/bits.ts"
 import type { ComponentDef } from "#src/sim/types.ts"
 
 // { width = 32 } = {} is for when an options object isn't provided.
@@ -49,9 +50,11 @@ export const alu = ({ width = 32} = {}): ComponentDef => ({
     inputs: [{ name: 'a', width}, {name: 'b', width}, {name: 'func', width: 3}],
     outputs: [{ name: 'out', width}],
     combInputs: [ 'a', 'b', 'func' ],
-    evaluate: (a, b, func) => ({
-
-    })
+    evaluate: ({a, b, func}) => ({ out: aluLogic(a, b, func) })
 })
 
-const 
+function aluLogic(a: number, b: number, fBits: number): number {
+    if (!(fBits in BITS_FUNC)) { throw new Error(`Unrecognized functions bits: ${fBits}`) }
+    const op = BITS_FUNC[fBits as funcBits]
+    return FUNC[op](a, b)
+}

@@ -21,15 +21,23 @@ export const toSigned = (v: number, w: number) => v & (1 << (w-1)) ? v - 2 ** w 
 //      e.g. bits(instr, 31, 26) --> opcode
 export const bits = (v: number, hi: number, lo: number) => trunc(v >>> lo, hi-lo + 1);
 
-export const FUNCS: Record<string, number> = {
-    "add": 0b000,
-    "sub": 0b001,
+export const FUNC: Record<funcType, (a: number, b: number) => number > = {
+    "add": ((a, b) => a + b),
+    "sub": ((a, b) => a - b),
+    "mod": ((a, b) => a % b)
 }
+
+export const BITS_FUNC: Record<funcBits, funcType> = {
+    0b000: 'add',
+    0b001: 'sub',
+    0b010: 'mod'
+}
+
+export const FUNC_BITS: Record<funcType, funcBits> = {
+    add: 0b000,
+    sub: 0b001,
+    mod: 0b010
+}
+
 export type funcType = "add" | "sub" | "mod"
-export const func = (bits: number) => ({
-
-})
-
-export const func = (op: funcType) => ({
-
-})
+export type funcBits =  0b000 | 0b001 | 0b010

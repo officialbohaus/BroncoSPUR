@@ -5,5 +5,6 @@ export const library: Record<string, (params?: any) => ComponentDef> = {
     Adder: c.adder,
     Constant: c.constant,
     Register: c.register,
-    Mux2: c.mux2
+    Mux2: c.mux2,
+    Alu: c.alu,
 }
